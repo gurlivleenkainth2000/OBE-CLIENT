@@ -14,6 +14,7 @@ import { AssessmentsComponent } from '../../pages/assessments/assessments.compon
 import { AttainmentModule } from 'src/app/sub-layouts/attainment/attainment.module';
 import { CurriculumModule } from 'src/app/sub-layouts/curriculum/curriculum.module';
 import { ComponentsModule } from 'src/app/components/components.module';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { ComponentsModule } from 'src/app/components/components.module';
     AttainmentModule,
     CurriculumModule,
     ComponentsModule,
-    NgbModule
+    NgbModule,
+    HttpClientModule
   ],
   exports: [],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

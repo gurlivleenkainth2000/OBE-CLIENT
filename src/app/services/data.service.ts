@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, PLATFORM_ID } from '@angular/core';
+import { CookieService } from 'ngx-cookie-service';
 import { BehaviorSubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Course } from '../models/course';
@@ -14,7 +15,8 @@ export class DataService {
 
   userModel: User;
   httpHeaders: HttpHeaders = new HttpHeaders({
-    'Cache-Control': 'no-cache'
+    'Cache-Control': 'no-cache',
+    'Access-Control-Allow-Credentials': 'true'
   });
 
   curriculumsSub = new BehaviorSubject<Curriculum[]>([]);
@@ -34,9 +36,7 @@ export class DataService {
 
   getCurriculums(): void {
     if(!this.curriculumRetrieved) {
-      this.httpClient.get<{ curriculums: any[] }>(`${environment.serverUrl}/curriculums`, {
-        headers: this.httpHeaders
-      })
+      this.httpClient.get<{ curriculums: any[] }>(`${environment.serverUrl}/curriculums`)
       .toPromise()
       .then(res => {
         this.curriculumsSub.next(res?.curriculums.filter(e => e.deptName === this.userModel?.department).map(e => e as Curriculum));
@@ -50,9 +50,7 @@ export class DataService {
 
   getCourses(): void {
     if(!this.coursesRetrieved) {
-      this.httpClient.get<{ courses: Course[] }>(`${environment.serverUrl}/courses`, {
-        headers: this.httpHeaders
-      })
+      this.httpClient.get<{ courses: Course[] }>(`${environment.serverUrl}/courses`)
       .toPromise()
       .then((res) => {
         this.coursessSub.next(res?.courses.filter(x => x.courseOwnerId === this.userModel._id));    

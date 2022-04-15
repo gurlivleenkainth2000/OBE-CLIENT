@@ -137,9 +137,7 @@ export class CoAttainmentComponent implements OnInit {
 
     this.httpClient.post(
       `${environment.serverUrl}/totalcoattainments/add-total-co-attainment`,
-      { ...tottalCoAttainmentObj }, {
-      headers: this.dataService.httpHeaders
-    }).toPromise()
+      { ...tottalCoAttainmentObj }).toPromise()
       .then((value) => {
         this.toast.success("Total CO Attainment Added Successfully");
       }, (error) => {

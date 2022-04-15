@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -11,6 +11,7 @@ import { AuthComponent } from './layouts/auth/auth.component';
 import { CookieService } from 'ngx-cookie-service';
 import { ToastrModule } from 'ngx-toastr';
 import { DataService } from './services/data.service';
+import { HttpRequestsInterceptor } from './interceptors/http-requests.interceptor';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { DataService } from './services/data.service';
   ],
   providers: [
     CookieService,
-    DataService
+    DataService,
+    { provide: HTTP_INTERCEPTORS, useClass: HttpRequestsInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })

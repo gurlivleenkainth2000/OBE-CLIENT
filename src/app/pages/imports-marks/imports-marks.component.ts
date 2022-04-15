@@ -48,9 +48,7 @@ export class ImportsMarksComponent implements OnInit {
 
   courseSelection(value: Course) {
     this.selectedCourse = value;
-    this.httpClient.get<{ assessments: Assessments[] }>(`${environment.serverUrl}/assessments/${value._id}/${this.ciaBool ? 'cia-marks' : 'ese-marks'}`, {
-      headers: this.dataService.httpHeaders
-    })
+    this.httpClient.get<{ assessments: Assessments[] }>(`${environment.serverUrl}/assessments/${value._id}/${this.ciaBool ? 'cia-marks' : 'ese-marks'}`)
       .toPromise()
       .then((value) => {
         // console.log(">>> Value: ", value.assessments);

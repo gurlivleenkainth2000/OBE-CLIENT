@@ -36,9 +36,7 @@ export class ImportSurveyResponseComponent implements OnInit {
 
   courseSelection(value: Course) {
     this.selectedCourse = value;
-    this.httpClient.get<{ assessments: Assessments[] }>(`${environment.serverUrl}/assessments/${value._id}/survey-marks`, {
-      headers: this.dataService.httpHeaders
-    })
+    this.httpClient.get<{ assessments: Assessments[] }>(`${environment.serverUrl}/assessments/${value._id}/survey-marks`)
       .toPromise()
       .then((value) => {
         // console.log(">>> Value: ", value.assessments);

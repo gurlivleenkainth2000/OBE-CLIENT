@@ -50,9 +50,7 @@ export class AssessmentsComponent implements OnInit {
 
   courseSelection(value: Course) {
     this.selectedCourse = value;
-    this.httpClient.get<{ assessments: Assessments[] }>(`${environment.serverUrl}/assessments/${value._id}`, {
-      headers: this.dataService.httpHeaders
-    })
+    this.httpClient.get<{ assessments: Assessments[] }>(`${environment.serverUrl}/assessments/${value._id}`)
       .toPromise()
       .then((value) => {
         this.directAssessments = value.assessments.filter(x => x.assessmentType !== 'survey');
