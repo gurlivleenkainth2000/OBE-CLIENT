@@ -3,12 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FiltersComponent } from './filters/filters.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NoDataComponent } from './no-data/no-data.component';
+import { ChangePasswordComponent } from './change-password/change-password.component';
 
 
 @NgModule({
   declarations: [
     FiltersComponent,
-    NoDataComponent
+    NoDataComponent,
+    ChangePasswordComponent
   ],
   imports: [
     CommonModule,
@@ -17,7 +19,8 @@ import { NoDataComponent } from './no-data/no-data.component';
   ],
   exports: [
     FiltersComponent,
-    NoDataComponent
+    NoDataComponent,
+    ChangePasswordComponent
   ]
 })
 export class ComponentsModule { }

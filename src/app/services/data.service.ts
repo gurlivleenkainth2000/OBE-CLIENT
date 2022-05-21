@@ -34,9 +34,7 @@ export class DataService {
 
   getCurriculums(): void {
     if(!this.curriculumRetrieved) {
-      this.httpClient.get<{ curriculums: any[] }>(`${environment.serverUrl}/curriculums`, {
-        headers: this.httpHeaders
-      })
+      this.httpClient.get<{ curriculums: any[] }>(`${environment.serverUrl}/curriculums`)
       .toPromise()
       .then(res => {
         this.curriculumsSub.next(res?.curriculums.filter(e => e.deptName === this.userModel?.department).map(e => e as Curriculum));
@@ -50,9 +48,7 @@ export class DataService {
 
   getCourses(): void {
     if(!this.coursesRetrieved) {
-      this.httpClient.get<{ courses: Course[] }>(`${environment.serverUrl}/courses`, {
-        headers: this.httpHeaders
-      })
+      this.httpClient.get<{ courses: Course[] }>(`${environment.serverUrl}/courses`)
       .toPromise()
       .then((res) => {
         this.coursessSub.next(res?.courses.filter(x => x.courseOwnerId === this.userModel._id));    

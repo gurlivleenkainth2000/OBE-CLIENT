@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
+import { CookieService } from 'ngx-cookie-service';
 import { ToastrService } from 'ngx-toastr';
 import { User } from 'src/app/models/user';
 import { environment } from 'src/environments/environment';
@@ -15,8 +16,7 @@ import { ROLES, TITLES, DEPARTMENTS } from './../../models/constants';
 export class UserProfileComponent implements OnInit {
 
   user: User;
-  userForm: FormGroup | undefined;
-  changePasswordForm: FormGroup | undefined;
+  userForm!: FormGroup;
 
   updateBool: boolean = false;
   updateLoader: boolean = false;
@@ -27,18 +27,21 @@ export class UserProfileComponent implements OnInit {
   userDesignations: any = [];
   userDepartments: any = [];
 
+  loader: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private httpClient: HttpClient,
     private toast: ToastrService,
-    private route: Router
+    private cookieService: CookieService,
+    private router: Router
   ) {
     this.userSignatures = TITLES;
     this.userDesignations = ROLES;
     this.userDepartments = DEPARTMENTS;
 
     this.user = JSON.parse(localStorage.getItem('user') || "{}") as User;
-    if(this.route.url.replace("/", "").split("/")[0] === "change-password") {
+    if(this.router.url.replace("/", "").split("/")[0] === "change-password") {
       this.profileBool = false;
     } else {
       this.profileBool = true;
@@ -47,6 +50,10 @@ export class UserProfileComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.initialiseFormGroup();
+  }
+
+  initialiseFormGroup() {
     if(this.profileBool) {
       this.userForm = this.fb.group({
         firstName: [this.user.firstName],
@@ -58,12 +65,6 @@ export class UserProfileComponent implements OnInit {
         _id: [this.user._id],
       });
       this.userForm.disable();
-    } else {
-      this.changePasswordForm = this.fb.group({
-        password: [null],
-        confirmPassword: [null],
-        _id: [this.user._id]
-      })
     }
   }
 
