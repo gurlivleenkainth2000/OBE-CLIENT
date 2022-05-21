@@ -22,7 +22,7 @@ export class BatchesComponent implements OnInit {
   departments: any;
   curriculums: Curriculum[] = [];
   curriculumSub: Subscription | undefined;
-  userModel: User = JSON.parse(localStorage.getItem('user') || '');
+  userModel: User = JSON.parse(localStorage.getItem('user') || '{}');
 
   constructor(
     private modalService: NgbModal,

@@ -7,15 +7,17 @@ import { UsersComponent } from 'src/app/pages/users/users.component';
 import { AssessmentsComponent } from 'src/app/pages/assessments/assessments.component';
 import { AttainmentComponent } from 'src/app/sub-layouts/attainment/attainment.component';
 import { CurriculumComponent } from 'src/app/sub-layouts/curriculum/curriculum.component';
+import { AuthGuard } from 'src/app/guards/auth.guard';
 
 const routes: Routes = [
-  { path: 'home', component: HomeComponent },
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'faculty', component: UsersComponent },
-  { path: 'assessments', component: AssessmentsComponent },
+  { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: 'faculty', component: UsersComponent, canActivate: [AuthGuard] },
+  { path: 'assessments', component: AssessmentsComponent, canActivate: [AuthGuard] },
   {
     path: 'curriculum',
     component: CurriculumComponent,
+    canActivate: [AuthGuard],
     children: [
       {
         path: '',
@@ -26,6 +28,7 @@ const routes: Routes = [
   {
     path: 'attainment',
     component: AttainmentComponent,
+    canActivate: [AuthGuard],
     children: [
       {
         path: '',
@@ -33,8 +36,8 @@ const routes: Routes = [
       }
     ]
   },
-  { path: 'profile', component: UserProfileComponent },
-  { path: 'change-password', component: UserProfileComponent }
+  { path: 'profile', component: UserProfileComponent, canActivate: [AuthGuard] },
+  { path: 'change-password', component: UserProfileComponent, canActivate: [AuthGuard] }
 ];
 
 @NgModule({

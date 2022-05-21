@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -12,6 +12,8 @@ import { CookieService } from 'ngx-cookie-service';
 import { ToastrModule } from 'ngx-toastr';
 import { DataService } from './services/data.service';
 import { PdfService } from './services/pdf.service';
+import { AuthGuard } from './guards/auth.guard';
+import { HttpRequestsInterceptor } from './interceptors/http-requests.interceptor';
 
 @NgModule({
   declarations: [
@@ -34,7 +36,9 @@ import { PdfService } from './services/pdf.service';
   providers: [
     CookieService,
     DataService,
-    PdfService
+    PdfService,
+    AuthGuard,
+    { provide: HTTP_INTERCEPTORS, useClass: HttpRequestsInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })

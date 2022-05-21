@@ -35,7 +35,7 @@ export class CoursesComponent implements OnInit {
   courseType: any;
   departments: any;
 
-  userModel: User = JSON.parse(localStorage.getItem("user") || "");
+  userModel: User = JSON.parse(localStorage.getItem("user") || "{}");
 
   constructor(
     private fb: FormBuilder,

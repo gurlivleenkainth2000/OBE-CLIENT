@@ -29,7 +29,7 @@ export class DataService {
   constructor(
     private httpClient: HttpClient
   ) { 
-    this.userModel = JSON.parse(localStorage.getItem('user') || "");
+    this.userModel = JSON.parse(localStorage.getItem('user') || "{}");
   }
 
   getCurriculums(): void {

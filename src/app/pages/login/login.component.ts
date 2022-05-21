@@ -39,7 +39,13 @@ export class LoginComponent implements OnInit {
       .toPromise()
       .then((value: { message: string; user: any } | any) => {
         this.loader = false;
-        this.cookieService.set('user', { ...value['user'] }, { expires: 1, sameSite: 'Lax', secure: false });
+        console.log({ ...value, date: new Date()});
+
+        let date: Date = new Date();
+        date.setMinutes(date.getMinutes() + 60);
+        
+        this.cookieService.set('accessToken', value['tokens']['accessToken'], { expires: date, sameSite: 'Lax', secure: false });
+        this.cookieService.set('refreshToken', value['tokens']['refreshToken'], { expires: date, sameSite: 'Lax', secure: false });
         localStorage.setItem('user', JSON.stringify(value['user']));
         this.router.navigate(['/home'], { replaceUrl: true })
         // console.log(">>> Value: ", value);

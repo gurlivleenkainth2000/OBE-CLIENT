@@ -37,7 +37,7 @@ export class UserProfileComponent implements OnInit {
     this.userDesignations = ROLES;
     this.userDepartments = DEPARTMENTS;
 
-    this.user = JSON.parse(localStorage.getItem('user') || "") as User;
+    this.user = JSON.parse(localStorage.getItem('user') || "{}") as User;
     if(this.route.url.replace("/", "").split("/")[0] === "change-password") {
       this.profileBool = false;
     } else {
