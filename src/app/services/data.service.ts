@@ -42,7 +42,7 @@ export class DataService {
       })
       .toPromise()
       .then(res => {
-        this.curriculumsSub.next(res?.curriculums.filter(e => e.deptName === this.userModel?.department).map(e => e as Curriculum));
+        this.curriculumsSub.next(res?.curriculums.map(e => e as Curriculum));
         this.curriculumRetrieved = true;
       }, err => {
         console.log(">>> error: ", err);
