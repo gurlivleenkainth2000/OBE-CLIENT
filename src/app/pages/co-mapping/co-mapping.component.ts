@@ -27,6 +27,13 @@ export class CoMappingComponent implements OnInit {
   selectedPO: any;
   enableSelects: boolean = false;
 
+  selectOptions: any[] = [
+    { name: '-', selectedValue: -1 },
+    { name: '1', selectedValue: -1 },
+    { name: '2', selectedValue: -1 },
+    { name: '3', selectedValue: -1 }
+  ];
+
   constructor(
     private fb: FormBuilder,
     private httpClient: HttpClient,
@@ -54,6 +61,7 @@ export class CoMappingComponent implements OnInit {
   }
   
   getPOMap() {
+    if(this.selectedCourse.poMapId === null) return;
     this.httpClient.get<{ poMap: any }>(
       `${environment.serverUrl}/co_po_mapping/${this.selectedCourse._id}/get-po-map/${this.selectedCourse.poMapId}`,
       { headers: this.dataService.httpHeaders }
@@ -67,10 +75,10 @@ export class CoMappingComponent implements OnInit {
   reInitialiseForm() {
     let poKeys = Object.keys(this.selectedPO).filter(x => RegExp(/[PO]/g).test(x));
     poKeys.forEach((poKey, idx) => {
-      Object.assign([], this.selectedPO[poKey]).forEach((code: string, index: number) => {          
-        this.addPOFormGroup(code, poKey);
-      });
-    })
+      Object.entries(this.selectedPO[poKey]).forEach(([code, mappingStrength], idx: number) => {
+        this.addPOFormGroup(code, poKey, mappingStrength);
+      })
+    });
   }
   
   initialiseFormGroup(){
@@ -87,29 +95,30 @@ export class CoMappingComponent implements OnInit {
     });   
   }
 
-  addPOFormGroup(coCode: string, poCode: string) {
+  addPOFormGroup(coCode: string, poCode: string, event: any) {
+    let strengthValue = Number(event || event.target.value)
     if(this.coMappingForm.contains(poCode)) {
-      let coFormArray: FormArray = this.coMappingForm.get(poCode) as FormArray;
-      if(coFormArray.value.includes(coCode)) {
-        let idx: number = coFormArray.controls.findIndex((x: any) => x === coCode)
-        if(coFormArray.length > 1) {
-          coFormArray.removeAt(idx);
-        } else {
-          this.coMappingForm.removeControl(poCode)
-        }
+      let coFormGroup: FormGroup = this.coMappingForm.get(poCode) as FormGroup;
+      if(coFormGroup.get(coCode) === null) {
+        coFormGroup.addControl(coCode, this.fb.control(strengthValue));
       } else {
-        coFormArray.push(this.fb.control(coCode))
+        if(strengthValue === 0) {
+          coFormGroup.removeControl(coCode);
+          if(Object.keys(coFormGroup.controls).length === 0) this.coMappingForm.removeControl(poCode);
+        } else {
+          coFormGroup.patchValue({ [coCode]: strengthValue });
+        }
       }     
     } else {
-      this.coMappingForm.addControl(poCode, this.fb.array([
-        this.fb.control(coCode)
-      ]))
-    }   
+      this.coMappingForm.addControl(poCode, this.fb.group({
+        [coCode]: [strengthValue]
+      }));
+    }
   }
 
-  onCheckboxChecked(coCode: string, poCode: string) {
-    let coFormArray: FormArray = this.coMappingForm.get(poCode) as FormArray;
-    return coFormArray !== null ? coFormArray.controls.some(x => x.value === coCode) : false;
+  onOptionSelected(coCode: string, poCode: string) {
+    let coFormGroup: FormGroup = this.coMappingForm.get(poCode) as FormGroup;
+    return coFormGroup?.get(coCode) === null || coFormGroup === null ? 0 : coFormGroup.get(coCode)?.value || 0;
   }
 
   saveCOPOMapping() {
@@ -120,7 +129,7 @@ export class CoMappingComponent implements OnInit {
       { headers: this.dataService.httpHeaders }
     ).toPromise()
     .then((value) => {
-      console.log(value);
+      this.enableSelects = false;
       this.toast.success("Co PO Mapping Save Successfully", "Success");
     }, (error) => {
       console.log(error);
