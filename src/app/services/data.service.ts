@@ -56,7 +56,7 @@ export class DataService {
       this.httpClient.get<{ courses: Course[] }>(`${environment.serverUrl}/courses`)
       .toPromise()
       .then((res) => {
-        this.coursessSub.next(res?.courses.filter(x => x.courseOwnerId === this.userModel._id));    
+        this.coursessSub.next(res?.courses);    
         this.coursesRetrieved = true;
       }, (err) => {
         console.log(">>> error: ", err);

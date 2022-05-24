@@ -60,13 +60,13 @@
   </div>
 </div>
 
-<ng-template let-model #batchModel>
+<ng-template let-modal #batchModel>
   <div class="modal-header border-0">
     <div class="row w-100 m-0">
       <div class="col">
         <div class="d-flex justify-content-between align-items-center">
           <h4>{{ batchUpdateBool ? 'Update' : 'Add' }} Batchs</h4>
-          <button type="button" class="close" aria-label="Close" (click)="modal.dismiss();">
+          <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross Clicked')">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
