@@ -32,9 +32,14 @@ export class DataService {
     this.userModel = JSON.parse(localStorage.getItem('user') || "{}");
   }
 
-  getCurriculums(): void {
+  getCurriculums(): void {    
     if(!this.curriculumRetrieved) {
-      this.httpClient.get<{ curriculums: any[] }>(`${environment.serverUrl}/curriculums`)
+      this.httpClient.post<{ curriculums: any[] }>(`${environment.serverUrl}/curriculums`, {
+        deptName: this.userModel.department,
+        designation: this.userModel.designation,
+        curriculums: this.userModel.curriculums || [],
+        superAdmin: this.userModel.superAdmin
+      })
       .toPromise()
       .then(res => {
         this.curriculumsSub.next(res?.curriculums.filter(e => e.deptName === this.userModel?.department).map(e => e as Curriculum));

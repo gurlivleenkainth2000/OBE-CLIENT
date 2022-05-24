@@ -1,10 +1,12 @@
 import { DatePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
+import { Subscription } from 'rxjs';
 import { DEPARTMENTS, ROLES, TITLES } from 'src/app/models/constants';
+import { Curriculum } from 'src/app/models/curriculum';
 import { User } from 'src/app/models/user';
 import { DataService } from 'src/app/services/data.service';
 import { environment } from 'src/environments/environment';
@@ -29,10 +31,12 @@ export class UsersComponent implements OnInit {
   showPassword: boolean = false;
 
   datePipe: DatePipe = new DatePipe('en');
+  batchesSub: Subscription;
+  batches: Curriculum[] = [];
 
   constructor(
     private fb: FormBuilder,
-    private dataService: DataService,
+    public dataService: DataService,
     private httpClient: HttpClient,
     private modalService: NgbModal,
     private toast: ToastrService
@@ -44,7 +48,11 @@ export class UsersComponent implements OnInit {
     this.designations = ROLES
 
     this.fetchingLoader = true;
-    this.httpClient.get<{ response: User[], date: Date }>(`${environment.serverUrl}/users?department=${this.dataService.userModel.department}&userId=${this.dataService.userModel._id}`)
+    this.httpClient.post<{ response: User[], date: Date }>(`${environment.serverUrl}/users`, {
+      superAdmin: this.dataService.userModel.superAdmin,
+      deptName: this.dataService.userModel.department,
+      userId: this.dataService.userModel._id
+    })
       .toPromise()
       .then((value) => {
         // console.log(">>> Users: ", value.response);
@@ -55,6 +63,17 @@ export class UsersComponent implements OnInit {
         this.fetchingLoader = false;
         this.toast.warning("Something went wrong while fetching data from server...")
       })
+
+    this.getCurriculumns();
+  }
+
+  getCurriculumns() {
+    this.dataService.getCurriculums();
+    this.batchesSub = this.dataService.curriculumsSub.subscribe((list) => {
+      if(list.length !== 0) {
+        this.batches = list;
+      }
+    });
   }
 
   initialisedForm(userObj?: User | undefined): void {
@@ -71,10 +90,26 @@ export class UsersComponent implements OnInit {
       mobile: [userObj?.mobile || null],
       dateOfJoining: [this.datePipe.transform(userObj?.dateOfJoining, 'yyyy-MM-dd') || null],
       dob: [this.datePipe.transform(userObj?.dob, 'yyyy-MM-dd') || null],
+      curriculums: this.fb.array(userObj?.curriculums.map(e => this.fb.control(e)) || []),
       gender: [userObj?.gender || null],
       createdAt: [userObj?.createdAt || null],
       updatedAt: [userObj?.updatedAt || null],
     });
+  }
+
+  getControls() {
+    return this.userForm?.get("curriculums") as FormArray;
+  }
+
+  selectCurriculum(checked: boolean, curriculumId: string) {
+    if(checked) {
+      // Added to Curriculum Array
+      this.getControls().push(this.fb.control(curriculumId));
+    } else {
+      // Remove From the Array
+      let idx = this.getControls().controls.findIndex(e => e.value === curriculumId);
+      this.getControls().removeAt(idx);
+    }
   }
 
   openUserModal(modalRef: any, assessmentObj?: User | undefined) {
@@ -84,6 +119,16 @@ export class UsersComponent implements OnInit {
       keyboard: false,
       backdrop: 'static'
     });
+  }
+
+  openAssignModal(modalRef: any, userObj: any) {
+    this.initialisedForm(userObj);
+    this.updation = true;
+    this.modalService.open(modalRef);
+  }
+
+  onChecked(curriculumId: string) {
+    return this.getControls().controls.some(x => x.value === curriculumId);
   }
 
   changePasswordFieldMode = () => this.showPassword = !this.showPassword;

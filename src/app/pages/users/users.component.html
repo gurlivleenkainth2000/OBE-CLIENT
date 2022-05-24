@@ -11,7 +11,7 @@
             </div>
             <div class="col-12 col-sm-6">
               <div class="d-flex flex-column justify-content-end align-items-end" style="height: 100%;">
-                <button class="btn btn-primary d-flex align-items-center" (click)="openUserModal(userModal)">
+                <button class="btn btn-primary d-flex align-items-center" (click)="openUserModal(userModal)" *ngIf="dataService.userModel.superAdmin || dataService.userModel.designation === 'HoD'">
                   <span class="material-icons mr-1">add</span>
                   Add Faculty
                 </button>
@@ -35,8 +35,9 @@
                 <th>Name</th>
                 <th>Email</th>
                 <th>Mobile</th>
+                <th>Department</th>
                 <th>Designation</th>
-                <th>Actions</th>
+                <th *ngIf="dataService.userModel.superAdmin || dataService.userModel.designation === 'HoD'">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -45,13 +46,21 @@
                 <td>{{ user.firstName }} {{ user.lastName }}</td>
                 <td>{{ user.email }}</td>
                 <td>{{ user.mobile }}</td>
+                <td>{{ user.department }}</td>
                 <td>{{ user.designation }}</td>
-                <td>
+                <td *ngIf="dataService.userModel.superAdmin || dataService.userModel.designation === 'HoD'">
+                  <button type="button" class="btn btn-primary btn-sm mr-1 mb-1"
+                  (click)="openAssignModal(assignBatchesModal, user)">
+                    Assign Batches
+                  </button>
                   <button type="button" class="btn btn-primary btn-sm mr-1 mb-1"
                     (click)="openUserModal(userModal, user)">
                     Update
                   </button>
-                  <button type="button" class="btn btn-danger btn-sm mr-1 mb-1" (click)="deleteUser(deleteModal, user._id)">Delete</button>
+                  <button type="button" class="btn btn-danger btn-sm mr-1 mb-1"
+                    (click)="deleteUser(deleteModal, user._id)">
+                    Delete
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -62,12 +71,73 @@
   </div>
 </div>
 
+<ng-template let-modal #assignBatchesModal>
+  <div class="modal-header border-0">
+    <div class="row w-100 m-0">
+      <div class="col px-0">
+        <div class="d-flex justify-content-between align-items-center">
+          <h4 class="m-0">Assign Batches</h4>
+          <button type="button" class="close" aria-label="Close" (click)="modal.dismiss();">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-body">
+    <div class="table-responsive">
+      <table class="table table-flush">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col">Sr. No</th>
+            <th scope="col">Curriculum Name</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let batch of batches; index as idx">
+            <td>{{ idx + 1 }}</td>
+            <td>{{ batch.curriculumName }}</td>
+            <td>
+              <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" [id]="'customSwitch' + idx" 
+                  [checked]="onChecked(batch._id)"
+                  (change)="selectCurriculum($event.target.checked, batch._id)">
+                <label class="custom-control-label" [for]="'customSwitch' + idx">Assign</label>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <!-- <p *ngFor="let batch of batches; index as idx">{{ batch | json }}</p> -->
+  </div>
+  <div class="modal-footer">
+    <div class="row w-100">
+      <div class="col">
+        <div class="d-flex justify-content-end align-items-center">
+          <button type="button" class="btn btn-dark btn-sm mr-1" (click)="modal.dismiss('Cross Btn Clicked');">
+            Close
+          </button>
+          <button type="button" (click)="submitForm(userForm)" class="btn btn-dark btn-sm" [disabled]="userForm.invalid || loader">
+            Submit
+            <span *ngIf="loader">&nbsp;</span>
+            <div *ngIf="loader" class="spinner-border spinner-border-sm text-white" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
 <ng-template let-modal #userModal>
   <div class="modal-header border-0">
     <div class="row w-100 m-0">
       <div class="col">
         <div class="d-flex justify-content-between align-items-center">
-          <h4>Faculty {{ updation ? "Updation" : "Registeration" }}</h4>
+          <h4 class="m-0">Faculty {{ updation ? "Updation" : "Registeration" }}</h4>
           <button type="button" class="close" aria-label="Close" (click)="modal.dismiss();">
             <span aria-hidden="true">&times;</span>
           </button>

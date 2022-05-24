@@ -28,7 +28,7 @@ export class BatchesComponent implements OnInit {
     private modalService: NgbModal,
     private httpClient: HttpClient,
     private toast: ToastrService,
-    private data: DataService
+    public data: DataService
   ) {}
 
   ngOnInit(): void {

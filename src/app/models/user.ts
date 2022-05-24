@@ -11,6 +11,7 @@ export class User {
   dateOfJoining: Date | undefined;
   dob: Date | undefined;
   gender: string | undefined;
+  curriculums: string[] = [];
   createdAt: Date | undefined;
   updatedAt: Date | undefined;
   superAdmin: boolean | undefined;
