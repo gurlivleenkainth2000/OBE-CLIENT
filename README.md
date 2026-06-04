@@ -1,27 +1,56 @@
-# OBECLIENTMASTER
+# OBE Platform — Client
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.2.7.
+> Status: Archived (2021-2022). Kept public for portfolio review. Not maintained.
 
-## Development server
+The Angular frontend for the OBE (Outcome-Based Education) Platform: a tool that helps engineering faculty measure how well a course's assessments map to its declared outcomes, for accreditation reporting (NBA / Washington Accord).
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+This is one half of a two-repo project:
 
-## Code scaffolding
+- Client (this repo): the Angular app.
+- Server: the Node/Express/MongoDB API and attainment engine, at [OBE-SERVER](https://github.com/gurlivleenkainth2000/OBE-SERVER).
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+It was my final-year project at Guru Nanak Dev Engineering College, built to meet a real accreditation reporting requirement for the college.
 
-## Build
+## What it does
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+- Define courses, Course Outcomes (COs), and assessments.
+- Map COs to Program Outcomes and Program Specific Outcomes (PO / PSO).
+- Import student marks from Excel.
+- Compute direct and indirect attainment, with attainment-gap reporting.
+- Export accreditation-ready reports as PDF.
+- Role-aware screens (for example HoD vs faculty) and institutional login.
 
-## Running unit tests
+## Tech stack
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+- Angular 12 with feature-folder structure and lazy-loaded modules
+- ng-bootstrap and Bootstrap 4 for UI
+- ngx-toastr for notifications, ngx-cookie-service for token storage
+- pdfmake for PDF report generation
+- xlsx and file-saver for Excel import and file export
 
-## Running end-to-end tests
+## How it is put together
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+- Lazy-loaded modules for the admin and auth areas, with nested sub-modules for the attainment and curriculum sections.
+- An HTTP interceptor attaches credentials and handles expired sessions globally (a 401 routes the user back to login).
+- Route guards combine cookie and local-storage checks before allowing access.
+- Services cache shared data (curriculums, courses, terms) behind RxJS subjects so components do not re-fetch.
+- A dedicated PDF service builds the accreditation report from a typed payload.
 
-## Further help
+## Running it locally
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+This app needs the [OBE-SERVER](https://github.com/gurlivleenkainth2000/OBE-SERVER) backend running.
+
+```bash
+npm install
+ng serve
+```
+
+Then open `http://localhost:4200`. Point the app at your running API base URL in the environment config before signing in.
+
+## Authors
+
+Built by Gurlivleen Singh Kainth and Manjot Singh.
+
+## License
+
+Source-available for review only. See [LICENSE](./LICENSE). This is not open-source software: you may read and clone it to evaluate it, but reuse, redistribution, or submission as your own work is not permitted without written permission.
